@@ -12,7 +12,12 @@ class sem
     public:
     sem()
     {
+        if (sem_init(&m_sem,0,0)!=0)
+        {
+            throw std::exception();
+        }
         
     }
-
-}
+private:
+    sem_t m_sem;
+};
