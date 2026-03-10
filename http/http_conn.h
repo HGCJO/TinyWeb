@@ -116,9 +116,6 @@ private:
     }
     //从状态机读取一行，分析是请求报文的哪一部分
     LINE_STATUS parse_line();
-
-    void unmap();
-
     /*
     process_write() {
     1. add_status_line(200, "OK");       // 构建状态行
@@ -131,7 +128,7 @@ private:
     4. 发送响应后调用unmap();           // 释放文件映射
     }
     */
-
+    void unmap();
     //根据响应报文格式，生成对应8个部分，以下函数均由do_request调用
     bool add_response(const char *format, ...);
     bool add_content(const char *content);
@@ -167,7 +164,7 @@ private:
     long m_content_length;         // HTTP请求体的长度
     bool m_linger;                 // 是否保持连接（HTTP的Connection: keep-alive标识）
     
-    char *m_file_address;          // 读取服务器上的文件地址
+    char *m_file_address;          // 内存映射地址指针，指向服务器本地文件通过 mmap 映射到进程虚拟内存的起始位置
     struct stat m_file_stat;       // 存储本地文件的状态信息（大小、权限、类型等）
     struct iovec m_iv[2];          // io向量机制iovec
     int m_iv_count;                
