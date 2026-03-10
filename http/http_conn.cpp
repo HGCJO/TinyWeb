@@ -262,7 +262,7 @@ http_conn::HTTP_CODE http_conn::parse_request_line(char *text)
         return BAD_REQUEST;
     }
     //把分隔符替换为字符串结束符 '\0'，同时指针后移，让 text 只保留「请求方法」
-    *m_url++ = "\0";
+    *m_url++ = '\0';
     char *method=text;
     if(strcasecmp(method,"GET")==0)
         m_method = GET;
@@ -583,7 +583,7 @@ bool http_conn::write()
         modfd(m_epollfd,m_sockfd,EPOLLIN,m_TRIGMode);
         //连接复用
         init();
-        return;
+        return true;
     }
 
     while(1)
@@ -764,32 +764,28 @@ bool http_conn::process_write(HTTP_CODE ret)
             if(m_file_stat.st_size!=0)
             {
                 add_headers(m_file_stat.st_size);
-                if(m_file_stat.st_size != 0)
-                {
-                    add_headers(m_file_stat.st_size);
-                    //iov_base：缓冲区起始地址；
-                    //iov_len：缓冲区长度
-                    //第一个缓冲区指向已组装好的响应行 + 响应头
-                    m_iv[0].iov_base = m_write_buf;
-                    m_iv[0].iov_len = m_write_idx;
+                //iov_base：缓冲区起始地址；
+                //iov_len：缓冲区长度
+                //第一个缓冲区指向已组装好的响应行 + 响应头
+                m_iv[0].iov_base = m_write_buf;
+                m_iv[0].iov_len = m_write_idx;
 
-                    //第二个缓冲区指向文件内容的内存地址
-                    m_iv[1].iov_base = m_file_address;
-                    m_iv[1].iov_len = m_file_stat.st_size;
-                    m_iv_count = 2;
-                    //计算需要发送的总字节数
-                    bytes_to_send = m_write_idx + m_file_stat.st_size;
-                    //表示响应报文组装成功,无需执行后续的“空文件”逻辑
-                    return true;
-                }
-                else
-                {
-                    //处理文件大小为0
-                    const char *ok_string = "<html><body></body></html>";
-                    add_headers(strlen(ok_string));
-                    if(!add_content(ok_string))
-                        return false;
-                }
+                //第二个缓冲区指向文件内容的内存地址
+                m_iv[1].iov_base = m_file_address;
+                m_iv[1].iov_len = m_file_stat.st_size;
+                m_iv_count = 2;
+                //计算需要发送的总字节数
+                bytes_to_send = m_write_idx + m_file_stat.st_size;
+                //表示响应报文组装成功,无需执行后续的“空文件”逻辑
+                return true;
+            }
+            else
+            {
+                //处理文件大小为0
+                const char *ok_string = "<html><body></body></html>";
+                add_headers(strlen(ok_string));
+                if(!add_content(ok_string))
+                    return false;
             }
         }
         default:
