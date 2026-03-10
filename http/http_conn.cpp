@@ -125,7 +125,7 @@ void http_conn::init(int sockfd,const sockaddr_in &addr,char *root,int TRIGMode,
     m_address=addr;
 
     addfd(m_epollfd,sockfd,true,m_TRIGMode);
-    m_use_count++;
+    m_user_count++;
 
     //当浏览器出现连接重置时，可能是网站根目录出错或http响应格式出错或者访问的文件中内容完全为空
     doc_root = root;
@@ -801,9 +801,6 @@ bool http_conn::process_write(HTTP_CODE ret)
 
 
 
-
-
-
 //各子线程通过process函数对任务进行处理，调用process_read函数和process_write函数分别完成报文解析与报文响应两个任务。
 void http_conn::process()
 {
@@ -813,7 +810,7 @@ void http_conn::process()
     if(read_ret==NO_REQUEST)
     {
         //注册并监听事件
-        modfd(m_epollfd,m_sockfd,EPOLLIN);
+        modfd(m_epollfd,m_sockfd,EPOLLIN,m_TRIGMode);
         return;
     }
     //调用process_write完成报文响应
@@ -822,7 +819,7 @@ void http_conn::process()
     {
         close_conn();
     }
-    ////注册并监听写事件
-    modfd(m_epollfd,m_sockfd,EPOLLOUT);
+    //注册并监听写事件
+    modfd(m_epollfd,m_sockfd,EPOLLOUT,m_TRIGMode);
 
 }
