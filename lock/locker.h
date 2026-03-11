@@ -47,7 +47,7 @@ class locker
 public:
     locker()
     {
-        if(pthread_mutex_init(&m_mutex,NULL)!=0);
+        if(pthread_mutex_init(&m_mutex,NULL)!=0)
         {
             throw std::exception();
 

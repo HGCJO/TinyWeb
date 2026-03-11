@@ -173,7 +173,7 @@ void sort_timer_lst::add_timer(util_timer *timer , util_timer *lst_head)
     }
 }
 
-void Utils::init(int timesolt)
+void Utils::init(int timeslot)
 {
     m_TIMESLOT = timeslot;
 }
@@ -254,6 +254,7 @@ class Utils;
 
 void cb_func(client_data *user_data)
 {
+    //用于处理客户端连接超时,从 epoll 中删除超时的 socketfd、关闭 fd
     epoll_ctl(Utils::u_epollfd,EPOLL_CTL_DEL,user_data->sockfd,0);
     assert(user_data);
     close(user_data->sockfd);
