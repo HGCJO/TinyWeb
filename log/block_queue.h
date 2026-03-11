@@ -181,12 +181,8 @@ public:
         {
             // 5. 计算超时时间点：
             t.tv_sec = now.tv_sec + ms_timeout / 1000;
-            t.tv_nsec = (ms_timeout % 1000) * 1000000;
-            if (t.tv_nsec >= 1000000000)
-            {
-                t.tv_sec += 1;
-                t.tv_nsec -= 1000000000;
-            }
+            t.tv_nsec = (ms_timeout % 1000) * 1000;
+
 
             // 6. 调用条件变量的超时等待接口：
             if (!m_cond.timewait(m_mutex.get(), t))
@@ -221,42 +217,6 @@ private:
     int m_front;
     int m_back;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
