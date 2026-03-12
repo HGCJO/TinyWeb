@@ -72,7 +72,7 @@ public:
     ~http_conn() {}
 public:
     //初始化套接字地址，函数内部会调用私有方法init
-    void init(int sockfd,const sockaddr_in_ &addr);
+    void init(int sockfd,const sockaddr_in &add,char *, int, int, string user, string passwd, string sqlname);
     //关闭http连接
     void close_conn(bool real_close=true);
     void process();
@@ -85,7 +85,7 @@ public:
         return &m_address;
     }
     //同步线程初始化数据库读取表
-    void initmysql_result();
+    void initmysql_result(connection_pool *connPool);
     //CGI使用线程池初始化数据库表
     void initresultFile(connection_pool *connPool);
 

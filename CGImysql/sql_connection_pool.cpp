@@ -25,7 +25,6 @@ connection_pool *connection_pool::GetInstance()
 }
 //构造初始化,让连接池持有数据库的核心配置
 //工作线程从数据库连接池取得一个连接，访问数据库中的数据，访问完毕后将连接交还连接池。
-
 void connection_pool::init(string url, string User, string PassWord, string DBName, int Port, int MaxConn, int close_log)
 {
     m_url = url;

@@ -23,9 +23,9 @@ const int TIMESLOT = 5;             //最小超时单位
 class WebServer
 {
 public:
-    WebServer();
-    ~WebServer();
-    //	初始化 WebServer 核心配置
+    WebServer();                                                    //构造函数       
+    ~WebServer();                                                   //析构函数
+    //初始化 WebServer 核心配置
     void init(int port , string user, string passWord, string databaseName,
               int log_write , int opt_linger, int trigmode, int sql_num,
               int thread_num, int close_log, int actor_model);
@@ -60,7 +60,7 @@ public:
         int m_port;
         //网站根目录路径
         char *m_root;
-        //控制日志的写入方式 / 输出方式
+        //控制日志的写入方式 / 输出方式   0 同步 1 异步需要有最大长度
         int m_log_write;
         //控制是否开启日志
         int m_close_log;
